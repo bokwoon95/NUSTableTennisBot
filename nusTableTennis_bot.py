@@ -65,10 +65,11 @@ invitationAccept = False
 
 def speedController(first_chat_id,first_update_id):
     print('User setting Speed Control')
-    text ='Set Machine Speed'
+    message ='Set Machine Speed'
+    #reply_markup = reply_markup_maker(['Fast'],['Medium'],['Slow'])
     keyboard = [[{"text":"Fast"}],[{"text":"Medium"}],[{"text:Slow"}]]
     reply_markup = {"keyboard":keyboard, "one_time_keyboard": True}
-    send_message(first_chat_id,text,json.dumps(reply_markup))
+    send_message(first_chat_id,message,json.dumps(reply_markup))
 
 
 def menu(first_chat_id,first_update_id):
