@@ -75,7 +75,7 @@ def speedController(first_chat_id,first_update_id):
 def menu(first_chat_id,first_update_id):
     print('User in main menu')
     commands = ['play','set speed']
-    reply_markup = reply_markup_maker(commands)
+    reply_markup = NUSTableTennisBot.reply_markup_maker(commands)
     message = "What can I help you with today?"
     send_message(first_chat_id, message,reply_markup)
 
