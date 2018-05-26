@@ -1,11 +1,7 @@
-
-#include <Arduino.h>
-#include <SoftwareSerial.h>
-#include <stdio.h>
-#include <stdlib.h>
-
 // Packet code
-int16_t ACK = 0, NAK = 1, HELLO = 2, READ = 3, WRITE = 4, DATA_RESP = 5;
+int ACK= 0;
+int HELLO = 2;
+
 
 // Method to Handshake with the RaspberryPI
 void handshake() {
@@ -15,8 +11,10 @@ void handshake() {
   while (handshake_flag == 1) {
     if (Serial.available()) {
       reply = Serial.read();
+      reply = reply - 48;
+      Serial.print( reply == HELLO);
       if (reply == HELLO) {
-        Serial.write(ACK);
+        Serial.print(ACK);
       }
       if (reply == ACK) {
         handshake_flag = 0;
@@ -27,7 +25,7 @@ void handshake() {
 
 void setup() {
   // put your setup code here, to run once:
-  Serial.begin(9600);
+  Serial.begin(115200);
   handshake();
 }
 
