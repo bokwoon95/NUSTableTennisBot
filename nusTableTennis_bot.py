@@ -5,12 +5,14 @@ import telepot as tele
 import json
 
 class BotHandler:
+    # Initialize bot
     def __init__(self, token):
         self.token = token
         self.api_url = "https://api.telegram.org/bot{}/".format(token)
 
     #url = "https://api.telegram.org/bot<token>/"
 
+    # Get the latest replies from the user
     def get_updates(self, offset=0, timeout=30):
         method = 'getUpdates'
         params = {'timeout': timeout, 'offset': offset}
@@ -100,7 +102,7 @@ def main():
         if len(all_updates) > 0:
             for current_update in all_updates:
                 print(current_update)
-                first_update_id = current_update['update_id']
+                first_update_id = current_update['first_update_id']
                 if 'text' not in current_update['message']:
                     first_chat_text='New member'
                 else:
