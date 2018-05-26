@@ -34,9 +34,12 @@ class BotHandler:
 token = "500873036:AAFS4YzoMR6NSaUrjldYRukhx0FvkxUurDg" #Token of your bot
 NUSTableTennisBot = BotHandler(token) #Your bot's name
 
-
+machineState = False
+invitationAccept = False
 
 def main():
+	global machineState
+	global invitationAccept
 	new_offset = 0
 	print('hi, now launching...')
 
@@ -61,11 +64,21 @@ def main():
 				else:
 					first_chat_name = "unknown"
 
-				if first_chat_text == 'Hi':
-					NUSTableTennisBot.send_message(first_chat_id, 'Morning ' + first_chat_name)
-					new_offset = first_update_id + 1
+				if first_chat_text == '/check':
+					if machineState == True:
+						NUSTableTennisBot.send_message(first_chat_id, 'There is a player playing. Do you want to join him/her? ' ) #+ first_chat_name)
+						new_offset = first_update_id + 1
+						if first_chat_text == '/yes' :
+							NUSTableTennisBot.send_message(first_chat_id, 'We will notify the players immediately, and get back to you soon.')
+							new_offset = first_update_id + 1
+						else:
+							NUSTableTennisBot.send_message(first_chat_id, 'Okay, I will see you soon.')
+							new_offset = first_update_id + 1
+					else:
+						NUSTableTennisBot.send_message(first_chat_id, 'There is currently no one playing with me. Do you want to come down and play with me?' ) #+ first_chat_name)
+						new_offset = first_update_id + 1
 				else:
-					NUSTableTennisBot.send_message(first_chat_id, 'How are you doing '+first_chat_name)
+					NUSTableTennisBot.send_message(first_chat_id, 'Hi, how are you doing '+first_chat_name + '?')
 					new_offset = first_update_id + 1
 
 
