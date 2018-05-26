@@ -1,5 +1,8 @@
 import requests
 import datetime
+import RPi.GPIO as GPIO
+import telepot as tele
+import json
 
 class BotHandler:
 	def __init__(self, token):
@@ -29,6 +32,20 @@ class BotHandler:
 		else:
 		   last_update = None
 		return last_update
+	
+	def reply_markup_maker(data):
+		keyboard = []
+		for i in range(0,len(data),2):
+			key =[]
+			key.append(data[i].title())
+			try:
+				key.append(data[i+1].title())
+			except:
+				pass
+			keyboard.append(key)
+
+		reply_markup = {"keyboard":keyboard, "one_time_keyboard": True}
+		return json.dumps(reply_markup)
 
 
 token = "500873036:AAFS4YzoMR6NSaUrjldYRukhx0FvkxUurDg" #Token of your bot
@@ -37,11 +54,45 @@ NUSTableTennisBot = BotHandler(token) #Your bot's name
 machineState = False
 invitationAccept = False
 
+def machineChecker():
+	#print('User interacting with Machine')
+	#message ='Do you want to play Table Tennis?'
+	#keyboard = [[{"text":"Fast"}],[{"text":"Medium"}],[{"text:Slow"}]]
+	#reply_markup = {"keyboard":keyboard, "one_time_keyboard": True}
+	#send_message(chat_id,message,json.dumps(reply_markup))
+
+def speedController(chat_id,update_id):
+	print('User setting Speed Control')
+	text ='Set Machine Speed'
+	keyboard = [[{"text":"Fast"}],[{"text":"Medium"}],[{"text:Slow"}]]
+	reply_markup = {"keyboard":keyboard, "one_time_keyboard": True}
+	send_message(chat_id,text,json.dumps(reply_markup))
+
+		
+def menu(chat_id,update_id):
+	print('User in main menu')
+	commands = ['play','set speed']
+	reply_markup = reply_markup_maker(commands)
+	message = "What can I help you with today?"
+	send_message(chat_id, message,reply_markup)
+	
+	sleep(0.5)
+	
+	while text.lower() not in commands:
+		chat_id,text,update_id= get_last_id_text(get_updates(update_id+1))	
+		sleep(0.5)
+
+	if text.lower()=='set speed':
+		speedController(chat_id,update_id)
+
+	elif text.lower()=='play':
+		machineChecker(chat_id,update_id)
+
 def main():
 	global machineState
 	global invitationAccept
 	new_offset = 0
-	print('hi, now launching...')
+	print('Hi, NUSTableTennisBot now launching...')
 
 	while True:
 		all_updates=NUSTableTennisBot.get_updates(new_offset)
@@ -63,7 +114,9 @@ def main():
 					first_chat_name = current_update['message']['from']['first_name']
 				else:
 					first_chat_name = "unknown"
-
+				
+				
+				menu(chat_id, update_id)
 				if first_chat_text == '/check':
 					if machineState == True:
 						NUSTableTennisBot.send_message(first_chat_id, 'There is a player playing. Do you want to join him/her? ' ) #+ first_chat_name)
@@ -77,10 +130,14 @@ def main():
 					else:
 						NUSTableTennisBot.send_message(first_chat_id, 'There is currently no one playing with me. Do you want to come down and play with me?' ) #+ first_chat_name)
 						new_offset = first_update_id + 1
-				else:
+				elif first_chat_text == :
 					NUSTableTennisBot.send_message(first_chat_id, 'Hi, how are you doing '+first_chat_name + '?')
 					new_offset = first_update_id + 1
 
+GPIO.setup(7, GPIO.IN)
+GPIO.setup(8, GPIO.IN)
+machineState = GPIO.input(7)
+invitationAccept = GPIO.input(8)
 
 if __name__ == '__main__':
 	try:
