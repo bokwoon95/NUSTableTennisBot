@@ -1,0 +1,10 @@
+import serial
+ser = serial.Serial("/dev/ttyS0", 9600, timeout=1)
+
+ser.write("testing")
+try:
+    while 1:
+        response = ser.readline()
+        print(response)
+except KeyboardInterrupt:
+    ser.close()

@@ -102,7 +102,7 @@ def main():
         if len(all_updates) > 0:
             for current_update in all_updates:
                 print(current_update)
-                first_update_id = current_update['first_update_id']
+                first_update_id = current_update['update_id']
                 if 'text' not in current_update['message']:
                     first_chat_text='New member'
                 else:
