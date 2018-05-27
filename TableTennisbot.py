@@ -97,32 +97,41 @@ def machineChecking(first_chat_id, first_chat_text, first_update_id, new_offset)
         print ('test')
 #        TTTBot.send_message(first_chat_id,'OK!',reply_markup)
         #first_chat_text = TTTBot.get_first_update()['message']['text']
-        first_chat_text = get_last_update_id(TTTBot.get_updates())['message']['text']
-        print (first_chat_text)
+        #first_chat_text = get_last_update_id(TTTBot.get_updates())['message']['text']
+        #print (first_chat_text)
 
         x = True
         while x == True:
+            js = json.loads((requests.get("https://api.telegram.org/bot455583182:AAEmTvauJXJ20d21wJOjMmwHgU1tccAj0As/getUpdates")).content.decode("utf8"))
+            num_updates = len(js["result"])
+            last_update = num_updates - 1
+            first_chat_text = js["result"][last_update]["message"]["text"]
             if first_chat_text == 'yes':
                 TTTBot.send_message(first_chat_id, 'I will inform the person right now')
                 invitation = True
-                x == False
-                new_offset = first_update_id + 1
+                x = False
             elif first_chat_text == 'no':
+                print("test3")
                 TTTBot.send_message(first_chat_id, 'I will see you next time then.')
                 invitation = False
-                x == False
-                exit()
+                x = False
 
     else:
         TTTBot.send_message(first_chat_id, 'There is no player at the moment. You should come and play with me.')
         exit()
 
+    new_offset = first_update_id +1
+#    print(current_update)
+
+
 def main():
     new_offset = 0
     print('Now launching...')
+    stopflag_a = "GO"
 
     while True:
         all_updates=TTTBot.get_updates(new_offset)
+        print(new_offset)
 
         if len(all_updates) > 0:
             for current_update in all_updates:
@@ -145,10 +154,13 @@ def main():
                     first_chat_name = "unknown"
 
                 if first_chat_text == 'Hi':
+                    print(first_chat_text)
                     TTTBot.send_message(first_chat_id, 'Morning ' + first_chat_name)
                     machineChecking(first_chat_id,first_chat_text, first_update_id, new_offset)
                 else:
-                    TTTBot.send_message(first_chat_id, 'How are you doing '+first_chat_name)
+                    if stopflag_a != "STOP":
+                        TTTBot.send_message(first_chat_id, 'How are you doing '+first_chat_name)
+                        stopflag_a == "STOP"
                     new_offset = first_update_id + 1
 
 
