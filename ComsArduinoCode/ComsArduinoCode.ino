@@ -1,10 +1,10 @@
 // Global Variables
 // Handshake
-int16_t ACK= 0, NACK = 1, HELLO = 2;
+int ACK= 0, NACK = 1, HELLO = 2;
 // Machine State
-int16_t MACHINE_IS_ON = 3, MACHINE_IS_OFF = 4;
+int MACHINE_IS_ON = 3, MACHINE_IS_OFF = 4;
 // Speed
-int16_t SLOW = 5, MEDIUM = 6, FAST = 7;
+int SLOW = 5, MEDIUM = 6, FAST = 7;
 int SLOW_SPEED, MEDIUM_SPEED, FAST_SPEED;
 
 // Change States
@@ -17,9 +17,9 @@ int isSoftwareControl = true;
 // Data Sent: Tell the RasberryPi if the Machine is turned on or off
 void checkMachineState(){
   if(potientialMeterValue > 0 && previousPotientialMeterValue == 0){
-    Serial.write(MACHINE_IS_ON);
+    Serial.print(MACHINE_IS_ON);
   } else if (potientialMeterValue == 0 && previousPotientialMeterValue > 0){
-    Serial.write(MACHINE_IS_OFF);
+    Serial.print(MACHINE_IS_OFF);
   }
 }
 
@@ -28,6 +28,7 @@ void changeSpeed(){
   int reply;
   if (Serial.available()) {
       reply = Serial.read();
+      reply = reply - 48;
       if(reply == SLOW){
         softwareSpeed = SLOW_SPEED;
       } else if(reply == MEDIUM){
@@ -49,8 +50,9 @@ void handshake() {
   while (handshake_flag == 1) {
     if (Serial.available()) {
       reply = Serial.read();
+      reply = reply - 48;
       if (reply == HELLO) {
-        Serial.write(ACK);
+        Serial.print(ACK);
       }
       if (reply == ACK) {
         handshake_flag = 0;
