@@ -32,13 +32,13 @@ def handshake(handshake_flag):
         ser.write(HELLO)
         string = ser.read()
         reply = int.from_bytes(string, byteorder='big', signed=True)
-        if (reply == ACK):
+        if (reply == 0):
             handshake_flag = False
             ser.write(ACK)
             print('Handshake completed')
 
 # Funcion to Check the Machine State
-# Data Received: Machine State if data is recieved from the Arduino 
+# Data Received: Machine State if data is recieved from the Arduino
 # Return: machineState (Boolean)
 def checkMachineState():
     while ser.in_waiting:
@@ -48,7 +48,7 @@ def checkMachineState():
             machineState = False
         elif(reply == MACHINE_IS_ON):
             machineState = True
-        
+
     return machineState
 
 # Function to Change Speed
@@ -95,7 +95,7 @@ def get_updates(offset = None):
         return res.json()
     except:
         pass;
-        
+
 # Get the Last Updated Data
 def get_last(data):
     results = data['result']
@@ -103,7 +103,7 @@ def get_last(data):
     last = count -1
     last_update = results[last]
     return last_update
-    
+
 # Get the last text id
 def get_last_id_text(updates):
     last_update = get_last(updates)
@@ -160,7 +160,7 @@ def machineChecker(chat_id, update_id):
         message = "There is no player as of now. Come and train with me!"
         send_message(chat_id,message)
     return
-    
+
 # Checks to see if there is a player nearby
 def playByYourself(chat_id, text, update_id):
     return chat_id, text, update_id
@@ -175,7 +175,7 @@ def end(chat_id,text,update_id,first_name):
         return chat_id,text,update_id,first_name
     elif text.lower() == 'no':
         return chat_id,text,update_id,first_name
-        
+
 # Send Green Light to Arduino
 # Called: When the bot starts
 def sendGreenLight(chat_id, text, update_id,first_name):
@@ -206,7 +206,7 @@ def start(chat_id,text,update_id,first_name):
     reply_markup = reply_markup_maker(['Start'])
     send_message(chat_id,message,reply_markup)
     chat_id,text,update_id,first_name = get_last_id_text(get_updates(update_id+1))
-    
+
     if text.lower() == 'start':
         return chat_id,text,update_id,first_name
 
@@ -216,28 +216,28 @@ def start(chat_id,text,update_id,first_name):
 def main():
     chat_id,text,update_id,first_name = get_last_id_text(get_updates())
     # Until the User Presses Start
-    chat_id,text,update_id,first_name = start(chat_id,text,update_id,first_name)    
+    chat_id,text,update_id,first_name = start(chat_id,text,update_id,first_name)
     while text.lower() != 'start':
         chat_id,text,update_id,first_name = start(chat_id,text,update_id,first_name)
-    
+
     while text.lower() != 'end':
         while isSomeonePlaying != True:
            chat_id, text, update_id,first_name = playByYourself(chat_id, text, update_id,first_name)
-        
+
         chat_id, text, update_id,first_name = askToJoinSession(chat_id, text, update_id,first_name)
 
         if text.lower() == 'yes':
             chat_id, text, update_id,first_name = sendGreenLight(chat_id, text, update_id,first_name)
-        
+
         chat_id,text,update_id,first_name = end(chat_id,text,update_id,first_name)
-    
+
     message = 'Thank you for using Awesome Table Tennis Bot'
     send_message(chat_id,message)
 
 # Start
 if __name__ == '__main__':
     print('Hi, NUSTableTennisBot now launching...')
-    handshake(True)
+    # handshake(True)
     try:
         while True:
             main()
